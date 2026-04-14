@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BYU Superfan Quiz</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #001E4C;
+  color: white;
+  margin: 0;
+  padding-top: 60px;
+  text-align: center;
+}
+
+/* TOP BAR */
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  background: #001E4C;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 16px;
+  font-weight: bold;
+  z-index: 1000;
+
+  border-bottom: 2px solid #003DA5;
+  box-sizing: border-box;
+}
+
+#topbar .left {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+#topbar .right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#topbar a {
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+#topbar a:hover {
+  background: #003DA5;
+}
+
+#topbar button {
+  background: #003DA5;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#topbar button:hover {
+  background: #002a70;
+}
+
+/* CONTAINER */
+.container {
+  background: white;
+  color: black;
+  width: 70%;
+  margin: auto;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+/* OPTIONS */
+.option {
+  display: block;
+  width: 80%;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 8px;
+  background: #003DA5;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: #002a70;
+}
+
+/* PROGRESS BAR */
+#barContainer {
+  width: 100%;
+  height: 18px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+#bar {
+  height: 100%;
+  width: 0%;
+  background: #003DA5;
+  transition: width 0.3s ease;
+}
+
+#result {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP MENU -->
+<div id="topbar">
+  <div class="left">🏀 BYU Superfan Quiz</div>
+
+  <div class="right">
+    <a href="index.html">Home</a>
+    <a href="scratch.html">Fan Page</a>
+    <button onclick="start()">Restart Quiz</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="barContainer">
+    <div id="bar"></div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div id="result"></div>
+
+</div>
+
+<script>
+
+/* QUESTION BANK */
+const bank = [
+  { q:"BYU all-time leading scorer?", options:["Tyler Haws","Jimmer Fredette","Danny Ainge","Lee Cummard"], answer:"Tyler Haws" },
+  { q:"2011 National Player of the Year?", options:["Jimmer Fredette","Haws","Barcello","Cosic"], answer:"Jimmer Fredette" },
+  { q:"BYU NBA + MLB legend?", options:["Danny Ainge","Jimmer Fredette","Steve Young","Mark Pope"], answer:"Danny Ainge" },
+  { q:"European BYU legend?", options:["Kresimir Ćosić","Jimmer Fredette","Yoeli Childs","Haws"], answer:"Kresimir Ćosić" },
+  { q:"Current BYU coach?", options:["Kevin Young","Dave Rose","Mark Pope","Cleveland"], answer:"Kevin Young" },
+  { q:"BYU Big 12 entry year?", options:["2023","2021","2019","2015"], answer:"2023" },
+  { q:"BYU home arena?", options:["Marriott Center","Vivint Arena","Huntsman","MSG"], answer:"Marriott Center" },
+  { q:"Jimmer is known for?", options:["Deep 3s","Dunks","Defense","Passing"], answer:"Deep 3s" },
+  { q:"Top recruit (2020s)?", options:["AJ Dybantsa","Collin Chandler","Haws","Cummard"], answer:"AJ Dybantsa" },
+  { q:"BYU mascot?", options:["Cougar","Bear","Tiger","Eagle"], answer:"Cougar" },
+  { q:"BYU legend Danny Ainge was also a...", options:["MLB player","Soccer player","Hockey player","Coach only"], answer:"MLB player" },
+  { q:"Which coach built modern BYU success in 2010s?", options:["Dave Rose","Kevin Young","Pope","Cleveland"], answer:"Dave Rose" }
+];
+
+let quiz = [];
+let current = 0;
+let score = 0;
+
+/* START QUIZ */
+function start() {
+  quiz = [...bank]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
+
+  current = 0;
+  score = 0;
+
+  loadQ();
+}
+
+/* LOAD QUESTION */
+function loadQ() {
+  let q = quiz[current];
+  let options = [...q.options].sort(() => Math.random() - 0.5);
+
+  document.getElementById("quiz").innerHTML = `
+    <h2>Question ${current + 1} / ${quiz.length}</h2>
+    <h3>${q.q}</h3>
+    ${options.map(o =>
+      `<button class="option" onclick="answer('${o}')">${o}</button>`
+    ).join("")}
+  `;
+
+  updateBar();
+}
+
+/* ANSWER */
+function answer(choice) {
+  if (choice === quiz[current].answer) score++;
+
+  current++;
+
+  if (current < quiz.length) {
+    loadQ();
+  } else {
+    end();
+  }
+
+  updateBar();
+}
+
+/* PROGRESS BAR */
+function updateBar() {
+  let percent = (current / quiz.length) * 100;
+  document.getElementById("bar").style.width = percent + "%";
+}
+
+/* END GAME */
+function end() {
+  document.getElementById("quiz").innerHTML = "";
+  document.getElementById("bar").style.width = "100%";
+
+  let grade =
+    score === quiz.length ? "A+ ELITE FAN 🔥" :
+    score >= 8 ? "A STRONG FAN 👍" :
+    score >= 6 ? "B SOLID FAN" :
+    "C CASUAL FAN";
+
+  document.getElementById("result").innerText =
+    `Score: ${score}/${quiz.length} — ${grade}`;
+}
+
+/* AUTO START */
+start();
+
+</script>
+
+</body>
+</html>
