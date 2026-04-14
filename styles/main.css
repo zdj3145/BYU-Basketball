@@ -1,0 +1,17 @@
+.hero {
+  height: 60vh;
+  background: linear-gradient(to right, #002E5D, #0057B8);
+}
+.explore-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  padding: 15px;
+  border-radius: 10px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.explore-link:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.03);
+}
